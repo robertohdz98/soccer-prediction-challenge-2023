@@ -132,3 +132,9 @@ def get_stats(df, local=True):
     team_stats[f"{prefix}_avg_goals_difference"] = avg_goals_difference
 
     return team_stats
+
+
+def search_match(df, team1, team2):
+    condition_a = ((df["HT"] == team1) & (df["AT"] == team2))
+    condition_b = ((df["HT"] == team2) & (df["AT"] == team1))
+    return df.loc[condition_a | condition_b]
