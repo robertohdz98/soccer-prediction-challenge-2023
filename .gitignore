@@ -1,2 +1,7 @@
 # datasets
-datasets/
+datasets/**/*
+__pycache__
+
+# pickled training set
+teams_data
+teams.pickle
