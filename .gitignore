@@ -8,3 +8,5 @@ teams.pickle
 
 # first poisson preds
 test_set_predictions.csv
+
+.DS_Store
