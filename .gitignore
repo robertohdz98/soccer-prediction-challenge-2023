@@ -5,3 +5,6 @@ __pycache__
 # pickled training set
 teams_data
 teams.pickle
+
+# first poisson preds
+test_set_predictions.csv
