@@ -245,22 +245,27 @@ def get_team_season_points(dataset: pd.DataFrame,
 #########################################################################
 
 
-def extract_team_df(team_name: str, dataset: pd.DataFrame):
+def extract_team_df(team_name: str, dataset: pd.DataFrame, n_previous_games: int = None):
     ''' Extracts all games of a specific team in specific dataset.
     
     Input:
         - team_name: name of the team in the dataset
         - dataset: pd.DF with historic of games
+        - n_previous_games: number of last games of the team to be considered
+        (default: None, i.e, all games are considered)
     Outputs:
         - team_df: pd.DF with all games of that team
         - home_team_df: pd.DF only with games of the team played at home
         - away_team_df: pd.DF only with games of the team played away
     '''
     
-    home_team_df = dataset[dataset["HT"] == team_name]
-    away_team_df = dataset[dataset["AT"] == team_name]
-        
-    team_df = pd.concat([home_team_df, away_team_df]).sort_values(by="Date")
+    team_df = dataset[(dataset["HT"] == team_name) | (dataset["AT"] == team_name)]
+    
+    if n_previous_games:
+        team_df = team_df[-n_previous_games:]
+    
+    home_team_df = team_df[team_df["HT"] == team_name]
+    away_team_df = team_df[team_df["AT"] == team_name]
     
     return team_df, home_team_df, away_team_df
 
@@ -333,12 +338,14 @@ def get_stats(df: pd.DataFrame, local: bool = True) -> dict:
     return team_stats
 
 
-def complete_team_info(team_name: str, dataset: pd.DataFrame) -> dict:
+def complete_team_info(team_name: str, dataset: pd.DataFrame,
+                       n_previous_games: int = None) -> dict:
     ''' Completes all defined statistics for a given team.
     '''
 
     # Filter games only of specified team
-    team_df, home_team_df, away_team_df = extract_team_df(team_name, dataset)
+    team_df, home_team_df, away_team_df = extract_team_df(team_name, dataset,
+                                                          n_previous_games)
         
     # Create team dict
     team_stats = dict()
@@ -387,13 +394,14 @@ def complete_team_info(team_name: str, dataset: pd.DataFrame) -> dict:
     return team_stats
 
 
-def generate_all_teams_stats(dataset: pd.DataFrame) -> list[dict]:
+def generate_all_teams_stats(dataset: pd.DataFrame,
+                             n_recent_games: int = None) -> list[dict]:
     ''' Generates list of dicts with team statistics
     of each unique team in dataset.
     
     Inputs:
         - dataset: pd.DF where info will be extracted
-    
+        - n_recent_games: number of games to use for feature extraction per team
     Output:
         - teams_info: list of each team stats info in dict format
     '''
@@ -406,7 +414,8 @@ def generate_all_teams_stats(dataset: pd.DataFrame) -> list[dict]:
 
     # For each team, complete its info...
     for team in teams_list:
-        team_stats = complete_team_info(team_name=team, dataset=dataset)
+        team_stats = complete_team_info(team_name=team, dataset=dataset,
+                                        n_previous_games=n_recent_games)
         teams_info.append(team_stats)
         
     return teams_info

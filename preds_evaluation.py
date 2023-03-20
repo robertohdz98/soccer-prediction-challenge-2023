@@ -42,6 +42,17 @@ def evaluate_validation(preds_df: pd.DataFrame):
         pred_probs = [game.prd_W, game.prd_D, game.prd_L]
         rps_v = rps_func(pred_probs, actual_probs)
         preds_df.at[i, "RPS"] = rps_v
+        
+        # acc, probs = 0, 0 # out of loop
+        # if game.HS == int(game.pr_HS) and game.AS == int(game.prd_AS):
+        #     acc += 1
+        #     #print([game])
+        # condition1 = (game.WDL == "W" and game.prd_W > game.prd_D and game.prd_W > game.prd_L)
+        # condition2 = (game.WDL == "D" and game.prd_D > game.prd_W and game.prd_D > game.prd_L)
+        # condition3 = (game.WDL == "L" and game.prd_L > game.prd_W and game.prd_L > game.prd_D)
+        # if condition1 or condition2 or condition3:
+        #     probs += 1
+        # print(acc, probs) #out of loop
 
     n_games = preds_df.shape[0]
     RMSE_avg = np.sqrt(sum(preds_df["RMSE"].values) / n_games)
