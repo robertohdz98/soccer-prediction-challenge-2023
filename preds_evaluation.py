@@ -23,8 +23,9 @@ def evaluate_validation(preds_df: pd.DataFrame):
     actual_cols = ['HT', 'AT', 'HS', 'AS', 'GD', 'WDL']
     pred_cols = ['pr_HS', 'prd_AS', 'prd_W', 'prd_D', 'prd_L']
     
-    if (actual_cols + pred_cols) not in preds_df.columns:
-        raise ValueError(f"DF must contain {actual_cols + pred_cols}")
+    for col in (actual_cols + pred_cols):
+        if col not in list(preds_df.columns):
+            raise ValueError(f"DF must contain {actual_cols + pred_cols}")
     
     for i, game in preds_df.iterrows():
         # Evaluate predicted exact score with RMSE

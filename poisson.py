@@ -64,7 +64,7 @@ def predict_game(home_team: str, away_team: str, teams: dict = TEAMS):
     return HS, AS, prd_W, prd_D, prd_L
 
 
-def predict_dataset(df: pd.DataFrame, method: str):
+def predict_dataset(df: pd.DataFrame, train_stats_dict: dict):
     ''' Predicts each game in DF and writes predicted
     outcomes for all games in dataset (game outcome as
     HS/AS and prd_WDL probabilities).
@@ -73,10 +73,11 @@ def predict_dataset(df: pd.DataFrame, method: str):
         - df: pd.DF dataset with games to be predicted
         
     Output:
-    
+        - df_with_preds: pd.DF with prediction columns included
+        (pr_HS, prd_AS, prd_W, prd_D, prd_L)
     '''
     
-    if ['HT', 'AT'] not in df.columns:
+    if 'HT' not in list(df.columns) or 'AT' not in list(df.columns):
         raise ValueError("DF must contain HT, AT columns.")
     
     df_with_preds = df.copy()
@@ -88,7 +89,7 @@ def predict_dataset(df: pd.DataFrame, method: str):
         AT = game.AT
         # Ignore games with teams not present in training set
         try:
-            HS, AS, W, D, L = predict_game(HT, AT)
+            HS, AS, W, D, L = predict_game(HT, AT, teams=train_stats_dict)
         except:
             continue
         
